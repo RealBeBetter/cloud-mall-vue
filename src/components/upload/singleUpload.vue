@@ -58,7 +58,7 @@ export default {
         policy: '',
         signature: '',
         key: '',
-        ossaccessKeyId: '',
+        OSSAccessKeyId: '',
         dir: '',
         host: ''
         // callback:'',
@@ -72,38 +72,42 @@ export default {
     },
     handleRemove (file, fileList) {
       this.emitInput('')
-    }
-  },
-  handlePreview (file) {
-    this.dialogVisible = true
-  },
-  beforeUpload (file) {
-    let _self = this
-    return new Promise((resolve, reject) => {
-      policy().then(response => {
-        console.log('响应的数据', response)
-        _self.dataObj.policy = response.data.policy
-        _self.dataObj.signature = response.data.signature
-        _self.dataObj.ossaccessKeyId = response.data.accessid
-        _self.dataObj.key = response.data.dir + getUUID() + '_${filename}'
-        _self.dataObj.dir = response.data.dir
-        _self.dataObj.host = response.data.host
-        console.log('响应的数据222。。。', _self.dataObj)
-        resolve(true)
-      }).catch(err => {
-        reject(false)
+    },
+    handlePreview (file) {
+      this.dialogVisible = true
+    },
+    beforeUpload (file) {
+      let _self = this
+      return new Promise((resolve, reject) => {
+        policy().then(response => {
+          console.log('响应的数据', response)
+          _self.dataObj.policy = response.data.policy
+          _self.dataObj.signature = response.data.signature
+          _self.dataObj.OSSAccessKeyId = response.data.accessId
+          // eslint-disable-next-line no-template-curly-in-string
+          _self.dataObj.key = response.data.dir + getUUID() + '_${filename}'
+          _self.dataObj.dir = response.data.dir
+          _self.dataObj.host = response.data.host
+          console.log('响应的数据222。。。', _self.dataObj)
+          resolve(true)
+          // eslint-disable-next-line handle-callback-err
+        }).catch(err => {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject(false)
+        })
       })
-    })
-  },
-  handleUploadSuccess (res, file) {
-    console.log('上传成功...')
-    this.showFileList = true
-    this.fileList.pop()
-    this.fileList.push({
-      name: file.name,
-      url: this.dataObj.host + '/' + this.dataObj.key.replace('${filename}', file.name)
-    })
-    this.emitInput(this.fileList[0].url)
+    },
+    handleUploadSuccess (res, file) {
+      console.log('上传成功...')
+      this.showFileList = true
+      this.fileList.pop()
+      this.fileList.push({
+        name: file.name,
+        // eslint-disable-next-line no-template-curly-in-string
+        url: this.dataObj.host + '/' + this.dataObj.key.replace('${filename}', file.name)
+      })
+      this.emitInput(this.fileList[0].url)
+    }
   }
 }
 </script>
